@@ -5,21 +5,35 @@ open! Generator
 let body_lookups =
   let offset = function
     (*  finger -> left, forward, down *)
-    | 0 -> -2.5, 0., 5. (* index + 1 *)
-    | 1 -> 0., 0., 0. (* index *)
-    | 2 -> 0., 3.5, -5. (* middle *)
-    | 3 -> 1., -2.5, 0.5 (* ring *)
-    | 4 -> 0.5, -18., 8.5 (* pinky *)
-    | 5 -> 0.5, -18., 8.5 (* pinky - 1 *)
+    (* index+1 *) 
+    | 0 -> -2.5, 0., 5.
+    (* index   *) 
+    | 1 -> 0., 0., 0.
+    (* middle  *) 
+    | 2 -> 0., 3.5, -5.
+    (* ring    *) 
+    | 3 -> 1., -2.5, 0.5
+    (* pinky   *) 
+    | 4 -> 0.5, -18., 8.5 
+    (* pinky-1 *) 
+    | 5 -> 0.5, -18., 8.5 
+    (* default *) 
     | _ -> 0., 0., 0.
   and curve = function
-    | i when i >= 3 ->
-      Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
-    (* ring and pinky *)
-    | i when i = 0 ->
-      Curvature.(
-        curve ~well:(spec ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.95)) ())
-    | _ -> Curvature.(curve ~well:(spec ~radius:46.5 (Float.pi /. 6.1)) ())
+    (* index+1 *)
+    | 0 -> Curvature.(curve ~well:(spec ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.95)) ())
+    (* index   *)
+    | 1 -> Curvature.(curve ~well:(spec ~radius:46.5 (Float.pi /. 6.1)) ())
+    (* middle  *)
+    | 2 -> Curvature.(curve ~well:(spec ~radius:46.5 (Float.pi /. 6.1)) ())
+    (* ring    *)
+    | 3 -> Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
+    (* pinky   *)
+    | 4 -> Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
+    (* pinky-1 *)
+    | 5 -> Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
+    (* default *)
+    | _ -> Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
   and splay = function
     | i when i = 3 -> Float.pi /. -25. (* ring *)
     | i when i >= 4 -> Float.pi /. -11. (* pinky *)
