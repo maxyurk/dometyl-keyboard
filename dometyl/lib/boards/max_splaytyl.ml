@@ -2,22 +2,20 @@ open! Base
 open! Scad_ml
 open! Generator
 
-(* NOTE: The curvature of this configuration is made with MT3 caps in mind.
-   As SA caps are taller, they will likely be in collision with one another, as
-   can be seen if you set `Plate.make ~caps:Caps.SA.row`. The inner index Matty3
-   key models appear to collide here, but cases printed with this config do make
-   room for real MT3 caps. *)
 let body_lookups =
   let offset = function
+    (*  finger -> left, forward, down *)
+    | 0 -> -2.5, 0., 5. (* index + 1 *)
+    | 1 -> 0., 0., 0. (* index *)
     | 2 -> 0., 3.5, -5. (* middle *)
     | 3 -> 1., -2.5, 0.5 (* ring *)
-    | i when i >= 4 -> 0.5, -18., 8.5 (* pinky *)
-    | 0 -> -2.5, 0., 5.
+    | 4 -> 0.5, -18., 8.5 (* pinky *)
+    | 5 -> 0.5, -18., 8.5 (* pinky - 1 *)
     | _ -> 0., 0., 0.
   and curve = function
     | i when i >= 3 ->
       Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
-      (* ring and pinky *)
+    (* ring and pinky *)
     | i when i = 0 ->
       Curvature.(
         curve ~well:(spec ~tilt:(Float.pi /. 7.5) ~radius:46. (Float.pi /. 5.95)) ())
@@ -26,8 +24,14 @@ let body_lookups =
     | i when i = 3 -> Float.pi /. -25. (* ring *)
     | i when i >= 4 -> Float.pi /. -11. (* pinky *)
     | _ -> 0.
-  and rows _ = 3 in
-  Plate.Lookups.body ~offset ~curve ~splay ~rows ()
+  and rows = function
+    | 2 | 3 -> 4 (* 2 and 3 are middle and ring fingers indices *)
+    | _     -> 3   (* other fingers *)
+  and centre = function
+    | 2 | 3 -> 2. (* third row from bottom *) 
+    | _     -> 1. (* second row from bottom *) 
+  in
+  Plate.Lookups.body ~offset ~curve ~splay ~rows ~centre ()
 
 let thumb_lookups =
   let curve _ =
@@ -36,19 +40,20 @@ let thumb_lookups =
         ~fan:{ angle = Float.pi /. 9.; radius = 70.; tilt = Float.pi /. 48. }
         ~well:{ angle = Float.pi /. 7.5; radius = 47.; tilt = 0. }
         ())
-  in
-  Plate.Lookups.thumb ~curve ()
+  and rows _ = 3 in
+  Plate.Lookups.thumb ~curve ~rows ()
 
 let plate_builder =
   Plate.make
-    ~n_body_cols:5
+    ~n_body_cols:6
+    ~n_thumb_cols:2
     ~body_lookups
     ~thumb_lookups
     ~thumb_offset:(-13., -41., 10.)
     ~thumb_angle:Float.(pi /. 40., pi /. -14., pi /. 24.)
     ~rotate_thumb_clips:false
-    ~caps:Caps.Matty3.row
-    ~thumb_caps:Caps.MT3.(fun i -> if i = 1 then space_1_25u else space_1u)
+    ~caps:Caps.DSA.uniform
+    ~thumb_caps:Caps.DSA.uniform
 
 let wall_builder plate =
   let eyelet_config = Eyelet.magnet_6x3_config in
@@ -56,7 +61,7 @@ let wall_builder plate =
     { body =
         auto_body
           ~n_steps:(`Flat 3)
-          ~north_clearance:2.5
+          ~north_clearance:10.5
           ~south_clearance:2.5
           ~side_clearance:1.5
           ~eyelet_config
@@ -87,7 +92,7 @@ let base_connector =
     ~body_join_steps:(`Flat 3)
     ~thumb_join_steps:(`Flat 3)
     ~fudge_factor:8.
-    ~close_thumb:true
+    ~close_thumb:false
     ~pinky_elbow:false
     ~overlap_factor:1.
 
