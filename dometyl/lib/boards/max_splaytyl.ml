@@ -14,9 +14,9 @@ let body_lookups =
     (* ring    *) 
     | 3 -> 1., -2.5, 0.5
     (* pinky   *) 
-    | 4 -> 0.5, -18., 8.5 
+    | 4 -> 0., -18., 15.5 
     (* pinky-1 *) 
-    | 5 -> 0.5, -18., 8.5 
+    | 5 -> 0.5, -28., 15.5 
     (* default *) 
     | _ -> 0., 0., 0.
   and curve = function
@@ -35,8 +35,10 @@ let body_lookups =
     (* default *)
     | _ -> Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
   and splay = function
+    (*
     | i when i = 3 -> Float.pi /. -25. (* ring *)
     | i when i >= 4 -> Float.pi /. -11. (* pinky *)
+    *)
     | _ -> 0.
   and rows = function
     | 2 | 3 -> 4 (* 2 and 3 are middle and ring fingers indices *)
