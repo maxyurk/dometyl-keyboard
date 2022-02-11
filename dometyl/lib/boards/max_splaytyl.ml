@@ -27,7 +27,7 @@ let body_lookups =
     (* middle  *)
     | 2 -> Curvature.(curve ~well:(spec ~radius:46.5 (Float.pi /. 6.1)) ())
     (* ring    *)
-    | 3 -> Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
+    | 3 -> Curvature.(curve ~well:(spec ~radius:46.5 (Float.pi /. 6.1)) ())
     (* pinky   *)
     | 4 -> Curvature.(curve ~well:(spec ~radius:37. (Float.pi /. 4.25)) ())
     (* pinky-1 *)
@@ -41,8 +41,8 @@ let body_lookups =
     *)
     | _ -> 0.
   and rows = function
-    | 2 | 3 -> 4 (* 2 and 3 are middle and ring fingers indices *)
-    | _     -> 3   (* other fingers *)
+    | 2 | 3 -> 5 (* 2 and 3 are middle and ring fingers indices *)
+    | _     -> 4   (* other fingers *)
   and centre = function
     | 2 | 3 -> 2. (* third row from bottom *) 
     | _     -> 1. (* second row from bottom *) 
